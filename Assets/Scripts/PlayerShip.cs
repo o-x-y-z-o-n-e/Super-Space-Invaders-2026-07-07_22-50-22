@@ -20,12 +20,17 @@ public class PlayerShip : MonoBehaviour {
 	private float attackCooldown;
 	private int projectileSpawnIndex;
 
+	private float health;
+
 	private void Awake() {
 		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 		camera = Camera.main;
+		health = 100.0F;
 	}
 
 	private void Update() {
+		if(Core.SuspendGameLoop) return;
+		
 		Movement();
 		Shooting();
 	}

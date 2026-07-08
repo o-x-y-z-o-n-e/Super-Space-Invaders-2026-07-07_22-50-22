@@ -29,6 +29,8 @@ public class Projectile : MonoBehaviour {
 	}
 
 	private void Update() {
+		if(Core.SuspendGameLoop) return;
+		
 		transform.position += velocity * Time.deltaTime;
 		
 		Vector3 delta = transform.position - lastPosition;
