@@ -1,6 +1,10 @@
 using UnityEngine;
+using System;
+using System.Collections.Generic;
 
-public class PlayerShip : MonoBehaviour {
+public class PlayerShip : MonoBehaviour, IDamageable {
+	
+	public bool IsDead => health <= 0.0F;
 	
 	[SerializeField] private float speed;
 	[SerializeField] private float acceleration;
@@ -11,8 +15,15 @@ public class PlayerShip : MonoBehaviour {
 	[SerializeField] private Transform[] projectileSpawns;
 	[Space]
 	[SerializeField] private float attackInterval;
+	[Space]
+	[SerializeField] private GameObject explosionPrefab;
+	[Space]
+	[SerializeField] private SpriteRenderer exhaustRenderer;
+	[SerializeField] private SpriteRenderer leftTrailRenderer;
+	[SerializeField] private SpriteRenderer rightTrailRenderer;
     
-	private SpriteRenderer spriteRenderer;
+	private SpriteRenderer renderer;
+	private CircleCollider2D collider;
 	private Camera camera;
 	
 	private Vector3 velocity;
@@ -22,8 +33,11 @@ public class PlayerShip : MonoBehaviour {
 
 	private float health;
 
+	private static List<Collider2D> lootPickupBuffer = new();
+
 	private void Awake() {
-		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+		renderer = GetComponentInChildren<SpriteRenderer>();
+		collider = GetComponent<CircleCollider2D>();
 		camera = Camera.main;
 		health = 100.0F;
 	}
@@ -33,13 +47,14 @@ public class PlayerShip : MonoBehaviour {
 		
 		Movement();
 		Shooting();
+		Looting();
 	}
 
 	private void Movement() {
 		float x = Input.GetAxis("Horizontal");
 		float y = Input.GetAxis("Vertical");
 		
-		Vector2 size = spriteRenderer.sprite.bounds.size;
+		Vector2 size = renderer.sprite.bounds.size;
 		
 		Vector2 targetVelocity = new Vector2(x, y) * speed;
 		
@@ -72,11 +87,17 @@ public class PlayerShip : MonoBehaviour {
 			velocity.y = 0.0F;
 		}
 
-		spriteRenderer.transform.localScale = new Vector3(
-			Mathf.Lerp(1.0F, sideMovementScale, Mathf.Abs(velocity.x) / Mathf.Max(speed, Mathf.Epsilon)),
+		float strafe = Mathf.Abs(velocity.x) / Mathf.Max(speed, Mathf.Epsilon);
+		leftTrailRenderer.color = new Color(1.0F, 1.0F, 1.0F, strafe);
+		rightTrailRenderer.color = new Color(1.0F, 1.0F, 1.0F, strafe);
+		renderer.transform.localScale = new Vector3(
+			Mathf.Lerp(1.0F, sideMovementScale, strafe),
 			1.0F,
 			1.0F
 		);
+		
+		float thrust = (velocity.y / Mathf.Max(speed, Mathf.Epsilon) + 1.0F) / 2.0F;
+		exhaustRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(0.5F, 2.0F, thrust), 1.0F);
 	}
 
 	private void Shooting() {
@@ -97,5 +118,43 @@ public class PlayerShip : MonoBehaviour {
 		projectileSpawnIndex = (projectileSpawnIndex + 1) % projectileSpawns.Length;
 		attackCooldown = attackInterval;
 	}
-	
+
+	public bool ApplyDamage(float amount) {
+		if(IsDead) return false;
+		if(amount <= 0.0F) return false;
+		
+		health = Mathf.Max(health - amount, 0.0F);
+		
+		if(health == 0.0F) {
+			Instantiate(explosionPrefab, transform.position, transform.rotation);
+			Destroy(gameObject);
+		}
+
+		return health == 0.0F;
+	}
+
+	private void Looting() {
+		ContactFilter2D filter = new ContactFilter2D();
+		filter.useLayerMask = true;
+		filter.SetLayerMask(LayerMask.GetMask("LootDrop"));
+		Physics2D.OverlapCircle(transform.position, collider.radius, filter, lootPickupBuffer);
+		for(int i = 0; i < lootPickupBuffer.Count; i++) {
+			if(lootPickupBuffer[i].TryGetComponent(out LootDrop loot)) {
+				PickUp(loot);
+			}
+		}
+	}
+
+	private void PickUp(LootDrop loot) {
+		switch (loot.Type) {
+			case LootDropType.Coin:
+				Core.Level.AddScorePoints(loot.Amount);
+				break;
+			case LootDropType.Upgrade:
+				// TODO
+				break;
+		}
+		Destroy(loot.gameObject);
+	}
+
 }

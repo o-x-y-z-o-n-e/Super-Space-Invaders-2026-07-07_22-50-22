@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-	public bool IsPaused;
+	public bool IsPaused => isPaused;
 	
 	private bool isPaused;
+	private int score;
+	private int lives;
 
 	private void Update() {
-		if(!Core.Level.IsActive) return;
+		if(!Core.Level.IsPlaying) return;
 		if(Input.GetKeyDown(KeyCode.Escape)) {
 			SetPaused(!isPaused);
 		}
@@ -28,9 +30,30 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public void TestSession() {
+	private void Reset() {
+		score = 0;
+		lives = 3;
+	}
+
+	public void Test() {
+		Reset();
 		SetPaused(false);
-		
+		Core.Gui.Find<HUD>().SetLives(lives);
+		Core.Level.StartLevel();
+	}
+
+	public void New() {
+		Reset();
+		SetPaused(false);
+		Core.Gui.Find<HUD>().SetLives(lives);
+		Core.Level.StartLevel();
+	}
+
+	public void Load() {
+		Reset();
+		SetPaused(false);
+		Core.Gui.Find<HUD>().SetLives(lives);
+		Core.Level.StartLevel();
 	}
 
 }

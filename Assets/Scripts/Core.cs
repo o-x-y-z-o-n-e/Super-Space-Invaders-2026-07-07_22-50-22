@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public static class Core {
 
-	public static bool SuspendGameLoop => gameManager.IsPaused && levelManager.IsActive;
+	public static bool SuspendGameLoop => gameManager.IsPaused && levelManager.IsPlaying;
 	
 	public static GameManager Game => gameManager;
 	public static LevelManager Level => levelManager;
@@ -40,7 +40,7 @@ public static class Core {
 			if(SceneManager.GetActiveScene().name == "Lobby") {
 				guiManager.Open<MainMenu>(true);
 			} else {
-				gameManager.TestSession();
+				gameManager.Test();
 			}
 		}
 	}

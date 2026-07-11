@@ -1,0 +1,20 @@
+- [ ] Level Manager
+	- [ ] Wave sequence
+	- [ ] Wave choreograph movement
+	- [ ] Score counter
+- [ ] Game Manager
+	- [ ] Game over
+	- [ ] Cut-scenes
+	- [ ] Win sequence
+	- [ ] Score counter
+- [ ] Player
+	- [ ] Explode + re-spawning
+	- [ ] Shield
+	- [ ] Pickups
+	- [ ] Weapon upgrades
+	- [ ] Engine visual effects
+- [ ] Misc
+	- [ ] Loot drops
+	- [ ] Music
+	- [ ] Sound effects
+	- [ ] GUI skin

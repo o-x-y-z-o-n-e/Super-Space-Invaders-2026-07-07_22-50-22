@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Projectile : MonoBehaviour {
 
@@ -7,10 +7,14 @@ public class Projectile : MonoBehaviour {
 	[SerializeField] private float speed;
 	[SerializeField] private float damage;
 	[SerializeField] private LayerMask layerMask;
+	[Space]
+	[SerializeField] private float spriteSpin;
 
 	private Vector3 velocity;
 	private Vector3 lastPosition;
 	private ContactFilter2D filter;
+	
+	private SpriteRenderer spriteRenderer;
 
 	private Camera camera;
 	private object owner;
@@ -21,6 +25,8 @@ public class Projectile : MonoBehaviour {
 		filter = new ContactFilter2D();
 		filter.useLayerMask = true;
 		filter.layerMask = layerMask;
+		
+		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 	}
 	
 	private void Start() {
@@ -40,6 +46,7 @@ public class Projectile : MonoBehaviour {
 		for(int i = 0; i < collisions.Count; i++) {
 			if(collisions[i].collider.TryGetComponent(out IDamageable damageable)) {
 				damageable.ApplyDamage(damage);
+				Destroy(gameObject);
 			}
 		}
 			
@@ -56,10 +63,18 @@ public class Projectile : MonoBehaviour {
 			) {
 			Destroy(gameObject);
 		}
+
+		if(spriteSpin != 0.0F) {
+			spriteRenderer.transform.Rotate(Vector3.forward, spriteSpin * Time.deltaTime);
+		}
 	}
 
 	public void SetOwner(object owner) {
 		this.owner = owner;
+	}
+
+	private void OnDrawGizmos() {
+		Gizmos.DrawWireSphere(transform.position, radius);
 	}
 
 }
