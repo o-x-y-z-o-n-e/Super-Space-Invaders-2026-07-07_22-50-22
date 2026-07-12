@@ -58,6 +58,7 @@ public class WaveGroup {
 			Enemy instance = GameObject.Instantiate(prefabs[i]);
 			instance.name = prefabs[i].name;
 			instance.transform.position = position;
+			instance.transform.rotation = Quaternion.AngleAxis(180, Vector3.forward);
 			instances.Add(instance);
 		}
 	}

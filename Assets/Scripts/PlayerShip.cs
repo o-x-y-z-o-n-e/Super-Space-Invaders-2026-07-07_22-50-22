@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(CircleCollider2D), typeof(AudioSource))]
-public class PlayerShip : MonoBehaviour, IDamageable {
+public class PlayerShip : SpaceShip, IDamageable {
 	
 	public bool IsDead => health <= 0.0F;
 	
+	[Space]
 	[SerializeField] private float speed;
 	[SerializeField] private float acceleration;
 	[Space]
@@ -16,12 +17,6 @@ public class PlayerShip : MonoBehaviour, IDamageable {
 	[SerializeField] private Transform[] projectileSpawns;
 	[Space]
 	[SerializeField] private float attackInterval;
-	[Space]
-	[SerializeField] private GameObject explosionPrefab;
-	[Space]
-	[SerializeField] private SpriteRenderer exhaustRenderer;
-	[SerializeField] private SpriteRenderer leftTrailRenderer;
-	[SerializeField] private SpriteRenderer rightTrailRenderer;
     
 	private SpriteRenderer renderer;
 	private CircleCollider2D collider;
@@ -116,6 +111,8 @@ public class PlayerShip : MonoBehaviour, IDamageable {
 		float strafe = Mathf.Abs(velocity.x) / Mathf.Max(speed, Mathf.Epsilon);
 		leftTrailRenderer.color = new Color(1.0F, 1.0F, 1.0F, strafe);
 		rightTrailRenderer.color = new Color(1.0F, 1.0F, 1.0F, strafe);
+		leftTrailRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(0.2F, 1.0F, strafe), 1.0F);
+		rightTrailRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(0.2F, 1.0F, strafe), 1.0F);
 		renderer.transform.localScale = new Vector3(
 			Mathf.Lerp(1.0F, sideMovementScale, strafe),
 			1.0F,

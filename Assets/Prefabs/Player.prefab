@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 34368392537300089}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.48, y: 0.26, z: 0}
+  m_LocalPosition: {x: -0.06, y: 0.64, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -154,7 +154,7 @@ Transform:
   m_GameObject: {fileID: 1972489168114901822}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -6, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -175,18 +175,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23eb1237b805b4f5aa1baf76acb54605, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShip
+  explosionPrefab: {fileID: 7288667235249262199, guid: da5fd26b78739fabfac60aedfe0452c2, type: 3}
+  exhaustRenderer: {fileID: 9028262350616287889}
+  leftTrailRenderer: {fileID: 6509615815454414997}
+  rightTrailRenderer: {fileID: 2490684996728976643}
   speed: 10
-  acceleration: 25
+  acceleration: 30
   sideMovementScale: 0.85
   projectilePrefab: {fileID: 1164720177896479753, guid: df573ce94d3d442dd880cb40c3845dc5, type: 3}
   projectileSpawns:
   - {fileID: 8408995934758049736}
   - {fileID: 3240588695215470101}
   attackInterval: 0.2
-  explosionPrefab: {fileID: 7288667235249262199, guid: da5fd26b78739fabfac60aedfe0452c2, type: 3}
-  exhaustRenderer: {fileID: 9028262350616287889}
-  leftTrailRenderer: {fileID: 6509615815454414997}
-  rightTrailRenderer: {fileID: 2490684996728976643}
 --- !u!58 &3380629359094846060
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -346,7 +346,7 @@ Transform:
   m_GameObject: {fileID: 4195911536022648569}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
-  m_LocalPosition: {x: -0.45, y: -0.77999973, z: 0}
+  m_LocalPosition: {x: -0.445, y: -0.22, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -402,7 +402,7 @@ SpriteRenderer:
   m_SortingOrder: 9
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 6aa26d098102249699eb0a7e8458a8c4, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -438,7 +438,7 @@ Transform:
   m_GameObject: {fileID: 4220728661464324845}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
-  m_LocalPosition: {x: 0.45, y: -0.77999973, z: 0}
+  m_LocalPosition: {x: 0.445, y: -0.22, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -494,7 +494,7 @@ SpriteRenderer:
   m_SortingOrder: 9
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 6aa26d098102249699eb0a7e8458a8c4, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -531,7 +531,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -0.375, z: 0}
-  m_LocalScale: {x: 1, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2312165751393566951}
@@ -621,7 +621,7 @@ Transform:
   m_GameObject: {fileID: 6307767929641144776}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.48, y: 0.26, z: 0}
+  m_LocalPosition: {x: 0.06, y: 0.64, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

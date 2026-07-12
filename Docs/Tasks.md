@@ -13,6 +13,7 @@
 	- [ ] Pickups
 	- [ ] Weapon upgrades
 	- [ ] Engine visual effects
+    - [ ] Mouse movement
 - [ ] Misc
 	- [ ] Loot drops
 	- [ ] Music

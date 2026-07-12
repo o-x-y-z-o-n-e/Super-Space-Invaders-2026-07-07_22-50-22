@@ -1,17 +1,16 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, IDamageable {
+public class Enemy : SpaceShip, IDamageable {
 
 	public bool IsDead => health <= 0.0F;
 
+	[Space]
 	[SerializeField] private float maxHealth;
 	[Space]
 	[SerializeField] private Projectile projectilePrefab;
 	[SerializeField] private Transform projectileSpawn;
 	[SerializeField] private float projectileIntervalMin;
 	[SerializeField] private float projectileIntervalMax;
-	[Space]
-	[SerializeField] private GameObject explosionPrefab;
 	
 	private float health;
 	private float attackCooldown;
