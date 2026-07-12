@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(CircleCollider2D), typeof(AudioSource))]
 public class PlayerShip : MonoBehaviour, IDamageable {
 	
 	public bool IsDead => health <= 0.0F;
@@ -24,6 +25,7 @@ public class PlayerShip : MonoBehaviour, IDamageable {
     
 	private SpriteRenderer renderer;
 	private CircleCollider2D collider;
+	private AudioSource audio;
 	private Camera camera;
 	
 	private Vector3 velocity;
@@ -33,17 +35,41 @@ public class PlayerShip : MonoBehaviour, IDamageable {
 
 	private float health;
 
+	private bool intro;
+	private float introTimer;
+
 	private static List<Collider2D> lootPickupBuffer = new();
 
 	private void Awake() {
 		renderer = GetComponentInChildren<SpriteRenderer>();
 		collider = GetComponent<CircleCollider2D>();
+		audio = GetComponent<AudioSource>();
+	}
+
+	private void Start() {
 		camera = Camera.main;
-		health = 100.0F;
+		exhaustRenderer.gameObject.SetActive(true);
+		leftTrailRenderer.gameObject.SetActive(true);
+		rightTrailRenderer.gameObject.SetActive(true);
+		health = 10.0F;
+		intro = true;
 	}
 
 	private void Update() {
 		if(Core.SuspendGameLoop) return;
+
+		if(intro) {
+			introTimer += Time.deltaTime;
+			float t = Mathf.Clamp01(introTimer / 1.25F);
+			t = Mathf.SmoothStep(0, 1, t);
+			transform.position = Vector3.Lerp(new Vector3(0, -11, 0), new Vector3(0, -6, 0), t);
+			exhaustRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(1.0F, 2.0F, Mathf.Sin(t * Mathf.PI)), 1.0F);
+			if(t == 1.0F) {
+				intro = false;
+			} else {
+				return;
+			}
+		}
 		
 		Movement();
 		Shooting();
@@ -153,6 +179,9 @@ public class PlayerShip : MonoBehaviour, IDamageable {
 			case LootDropType.Upgrade:
 				// TODO
 				break;
+		}
+		if(loot.PickupSound.Clip) {
+			audio.PlayOneShot(loot.PickupSound.Clip, loot.PickupSound.Volume);
 		}
 		Destroy(loot.gameObject);
 	}

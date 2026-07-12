@@ -139,7 +139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   radius: 0.17
   speed: 10
-  damage: 10
+  damage: 1
   layerMask:
     serializedVersion: 2
     m_Bits: 8

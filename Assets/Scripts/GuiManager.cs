@@ -27,6 +27,12 @@ public class GuiManager : MonoBehaviour {
 		}
 	}
 
+	private void Update() {
+		if(Input.GetKeyDown(KeyCode.Escape)) {
+			viewStack.Peek()?.OnEscapePressed();
+		}
+	}
+
 	private void Start() {
 		if(viewStack.Count == 0 && defaultView != null) {
 			Open(defaultView, true);

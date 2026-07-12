@@ -48,6 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LootDrop
   type: 0
   amount: 1000
+  pickupSound:
+    Clip: {fileID: 8300000, guid: 76f7cd50041421f7cbb079924cc64383, type: 3}
+    Volume: 0.5
 --- !u!58 &1552945575632904519
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -83,7 +86,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.14
+  m_Radius: 0.15
 --- !u!1 &3168617855234028895
 GameObject:
   m_ObjectHideFlags: 0

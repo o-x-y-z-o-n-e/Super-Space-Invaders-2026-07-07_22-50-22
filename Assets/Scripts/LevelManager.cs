@@ -6,12 +6,17 @@ public class LevelManager : MonoBehaviour {
 
 	public bool IsPlaying => playing;
 
+	[SerializeField] private PlayerShip playerPrefab;
+	[SerializeField] private float levelStartWaitTime;
+	[SerializeField] private float waveStartWaitTime;
+
 	private bool playing;
 	private int score;
 	private LevelReferences refs;
 	private int currentWaveIndex;
 	private int nextGroupIndex;
-	private float timer;
+	private float levelTimer;
+	private float waveTimer;
 
 	public void AddScorePoints(int points) {
 		score += points;
@@ -22,10 +27,11 @@ public class LevelManager : MonoBehaviour {
 		refs = FindObjectOfType<LevelReferences>();
 		score = 0;
 		playing = true;
-		timer = 0.0F;
+		levelTimer = 0.0F;
+		waveTimer = 0.0F;
 		Core.Gui.Find<HUD>().SetScore(0);
-		Core.Gui.Find<HUD>().ShowProgressNumberTitle("Level 1", 2.0F);
-		FirstWave();
+		Core.Gui.Find<HUD>().ShowProgressNumberTitle("Level 1", 2.5F);
+		SpawnPlayer();
 	}
 
 	private Wave GetCurrentWave() {
@@ -40,15 +46,27 @@ public class LevelManager : MonoBehaviour {
 		if(Core.SuspendGameLoop) return;
 		if(!playing) return;
 		
-		timer += Time.deltaTime;
+		levelTimer += Time.deltaTime;
+
+		if(levelTimer - Time.deltaTime < levelStartWaitTime && levelTimer >= levelStartWaitTime) {
+			FirstWave();
+		}
 
 		Wave currentWave = GetCurrentWave();
-		if(nextGroupIndex < currentWave.GetGroupCount()) {
-			if(timer >= currentWave.GetGroup(nextGroupIndex).Time) {
-				currentWave.Spawn(nextGroupIndex);
-				nextGroupIndex++;
+		if(currentWave) {
+			waveTimer += Time.deltaTime;
+			if(waveTimer > waveStartWaitTime && nextGroupIndex < currentWave.GetGroupCount()) {
+				if(waveTimer - waveStartWaitTime >= currentWave.GetGroup(nextGroupIndex).Time) {
+					currentWave.Spawn(nextGroupIndex);
+					nextGroupIndex++;
+				}
 			}
 		}
+	}
+
+	private void SpawnPlayer() {
+		PlayerShip player = Instantiate(playerPrefab, new Vector3(0, -11, 0), Quaternion.identity);
+		player.name = playerPrefab.name;
 	}
 
 	private void FirstWave() {
@@ -59,6 +77,7 @@ public class LevelManager : MonoBehaviour {
 	private void NextWave() {
 		currentWaveIndex++;
 		nextGroupIndex = 0;
+		waveTimer = 0.0F;
 		if(currentWaveIndex >= refs.GetWaves().Length) {
 			playing = false;
 		} else {
