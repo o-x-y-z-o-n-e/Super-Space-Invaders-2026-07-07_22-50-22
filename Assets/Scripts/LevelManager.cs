@@ -60,6 +60,8 @@ public class LevelManager : MonoBehaviour {
 					currentWave.Spawn(nextGroupIndex);
 					nextGroupIndex++;
 				}
+			} else {
+				// TODO: check all enemies dead, then move to next wave/level
 			}
 		}
 	}

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(CircleCollider2D), typeof(AudioSource))]
 public class PlayerShip : SpaceShip, IDamageable {
+
+	private const float SHIELD_FADE_TIME = 0.5F;
 	
 	public bool IsDead => health <= 0.0F;
 	
@@ -13,6 +15,8 @@ public class PlayerShip : SpaceShip, IDamageable {
 	[SerializeField] private Transform[] projectileSpawns;
 	[Space]
 	[SerializeField] private float attackInterval;
+	[Space]
+	[SerializeField] private SpriteRenderer shieldRenderer;
     
 	private SpriteRenderer renderer;
 	private CircleCollider2D collider;
@@ -26,6 +30,10 @@ public class PlayerShip : SpaceShip, IDamageable {
 
 	private bool intro;
 	private float introTimer;
+	
+	private float deathTimer;
+
+	private float shieldTimer;
 
 	private static List<Collider2D> lootPickupBuffer = new();
 
@@ -42,7 +50,7 @@ public class PlayerShip : SpaceShip, IDamageable {
 		exhaustRenderer.gameObject.SetActive(true);
 		leftTrailRenderer.gameObject.SetActive(true);
 		rightTrailRenderer.gameObject.SetActive(true);
-		health = 10.0F;
+		health = 1.0F;
 		intro = true;
 	}
 
@@ -50,6 +58,46 @@ public class PlayerShip : SpaceShip, IDamageable {
 		if(Core.SuspendGameLoop) return;
 		base.Update();
 
+		Shield();
+		Death();
+		Intro();
+		Movement();
+		Shooting();
+		Looting();
+	}
+
+	private void Shield() {
+		if(shieldTimer > 0.0F) {
+			shieldTimer -= Time.deltaTime;
+			float alpha = Mathf.Clamp01(shieldTimer / SHIELD_FADE_TIME);
+			shieldRenderer.color = new Color(shieldRenderer.color.r, shieldRenderer.color.g, shieldRenderer.color.b, alpha);
+			if(shieldTimer <= 0.0F) {
+				shieldTimer = 0.0F;
+				shieldRenderer.gameObject.SetActive(false);
+			}
+		}
+	}
+
+	public void ActiveShield(float time) {
+		shieldTimer = time;
+		shieldRenderer.color = new Color(shieldRenderer.color.r, shieldRenderer.color.g, shieldRenderer.color.b, 1);
+		shieldRenderer.gameObject.SetActive(true);
+	}
+
+	private void Death() {
+		if(deathTimer > 0.0F) {
+			deathTimer -= Time.deltaTime;
+			if(deathTimer <= 0.0F) {
+				deathTimer = 0.0F;
+				introTimer = 0.0F;
+				health = 1.0F;
+				intro = true;
+				ActiveShield(4.0F);
+			}
+		}
+	}
+
+	private void Intro() {
 		if(intro) {
 			detectVelocity = true;
 			introTimer += Time.deltaTime;
@@ -60,19 +108,18 @@ public class PlayerShip : SpaceShip, IDamageable {
 			if(t == 1.0F) {
 				intro = false;
 				detectVelocity = false;
-			} else {
-				return;
 			}
 		}
-		
-		Movement();
-		Shooting();
-		Looting();
 	}
 
 	private void Movement() {
-		float x = Input.GetAxis("Horizontal");
-		float y = Input.GetAxis("Vertical");
+		if(intro) return;
+		if(IsDead) return;
+
+		float x = Input.GetAxis("Horizontal");// + Input.GetAxis("Mouse X") * 20;
+		float y = Input.GetAxis("Vertical");// + Input.GetAxis("Mouse Y") * 20;
+		x = Mathf.Clamp(x, -1, 1);
+		y = Mathf.Clamp(y, -1, 1);
 		
 		Vector2 size = renderer.sprite.bounds.size;
 		
@@ -109,6 +156,9 @@ public class PlayerShip : SpaceShip, IDamageable {
 	}
 
 	private void Shooting() {
+		if(intro) return;
+		if(IsDead) return;
+		
 		if(attackCooldown > 0.0F) {
 			attackCooldown -= Time.deltaTime;
 			if(attackCooldown < 0.0F) attackCooldown = 0.0F;
@@ -130,18 +180,23 @@ public class PlayerShip : SpaceShip, IDamageable {
 	public bool ApplyDamage(float amount) {
 		if(IsDead) return false;
 		if(amount <= 0.0F) return false;
+		if(shieldTimer > 0.0F) return false;
 		
 		health = Mathf.Max(health - amount, 0.0F);
 		
 		if(health == 0.0F) {
 			Instantiate(explosionPrefab, transform.position, transform.rotation);
-			Destroy(gameObject);
+			transform.position = new Vector3(0, -11, 0);
+			deathTimer = 1.0F;
 		}
 
 		return health == 0.0F;
 	}
 
 	private void Looting() {
+		if(intro) return;
+		if(IsDead) return;
+		
 		ContactFilter2D filter = new ContactFilter2D();
 		filter.useLayerMask = true;
 		filter.SetLayerMask(LayerMask.GetMask("LootDrop"));

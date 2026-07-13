@@ -11,6 +11,8 @@ public class Enemy : SpaceShip, IDamageable {
 	[SerializeField] private Transform projectileSpawn;
 	[SerializeField] private float projectileIntervalMin;
 	[SerializeField] private float projectileIntervalMax;
+	[Space]
+	[SerializeField] private int scoreOnDeath;
 	
 	private float health;
 	private float attackCooldown;
@@ -46,6 +48,7 @@ public class Enemy : SpaceShip, IDamageable {
 		if(health == 0.0F) {
 			Instantiate(explosionPrefab, transform.position, transform.rotation);
 			Destroy(gameObject);
+			Core.Level.AddScorePoints(scoreOnDeath);
 		}
 
 		return health == 0.0F;

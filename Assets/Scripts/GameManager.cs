@@ -16,10 +16,11 @@ public class GameManager : MonoBehaviour {
 	public void SetPaused(bool paused) {
 		isPaused = paused;
 		// Time.timeScale = paused ? 0 : 1;
-		if(!Application.isEditor) {
-			Cursor.visible = paused;
-			Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
-		}
+		Cursor.visible = paused;
+		Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
+		// if(!Application.isEditor) {
+		// 	
+		// }
 
 		if(isPaused) {
 			Core.Gui.Open<PauseMenu>(true);

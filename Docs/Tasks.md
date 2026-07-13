@@ -1,21 +1,41 @@
+- [ ] Game Manager
+	- [ ] Game over/win sequence
+	- [ ] Level transition sequence
+	- [ ] Cut-scene system
 - [ ] Level Manager
 	- [ ] Wave sequence
 	- [ ] Wave choreograph movement
-	- [ ] Score counter
-- [ ] Game Manager
-	- [ ] Game over
-	- [ ] Cut-scenes
-	- [ ] Win sequence
-	- [ ] Score counter
+	- [x] Score counter
+- [ ] Enemies
+	- [ ] Type 1 (Normal)
+	- [ ] Type 2 (TBC)
+	- [ ] Type 3 (TBC)
+	- [ ] Type 4 (Bomber)
+	- [ ] Type 5 (TBC)
 - [ ] Player
-	- [ ] Explode + re-spawning
-	- [ ] Shield
-	- [ ] Pickups
-	- [ ] Weapon upgrades
+	- [x] Explode + re-spawning
+	- [x] Shield
+	- [x] Pickups
+	- [ ] Weapon types & upgrades
 	- [ ] Engine visual effects
-    - [ ] Mouse movement
+	- [ ] Mouse movement
+- [ ] GUI
+	- [x] Main Menu
+	- [ ] Start Menu
+		- [ ] Difficulty
+		- [ ] Player ship selection
+	- [ ] Load/save menu
+	- [x] Pause menu
+	- [ ] Settings menu
+		- [ ] Audio
+		- [ ] Video
+		- [ ] Input
+		- [ ] Game
+	- [ ] Confirm popup
 - [ ] Misc
-	- [ ] Loot drops
+	- [x] Loot drops
 	- [ ] Music
 	- [ ] Sound effects
 	- [ ] GUI skin
+	- [ ] Screen transition
+	- [ ] Projectile impact effects

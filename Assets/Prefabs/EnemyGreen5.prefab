@@ -454,8 +454,8 @@ MonoBehaviour:
   exhaustRenderer: {fileID: 7868796567497742480}
   leftTrailRenderer: {fileID: 2132677720766417954}
   rightTrailRenderer: {fileID: 7661711186996529660}
-  sideMovementScale: 0
-  speed: 0
+  sideMovementScale: 1
+  speed: 10
   maxHealth: 4
   projectilePrefab: {fileID: 7214909755117908016, guid: a32dff99832959c66adab4a95350e148, type: 3}
   projectileSpawn: {fileID: 1367756761583213984}

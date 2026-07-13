@@ -25,6 +25,13 @@ public class SpaceShip : MonoBehaviour {
 		lastPosition = transform.position;
 	}
 	
+	protected virtual void OnEnable() {
+		lastPosition = transform.position;
+	}
+
+	protected virtual void OnDisable() {
+		
+	}
 	
 	protected virtual void Update() {
 		
