@@ -176,12 +176,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShip
   explosionPrefab: {fileID: 7288667235249262199, guid: da5fd26b78739fabfac60aedfe0452c2, type: 3}
+  bodyRenderer: {fileID: 2934770345484416263}
   exhaustRenderer: {fileID: 9028262350616287889}
   leftTrailRenderer: {fileID: 6509615815454414997}
   rightTrailRenderer: {fileID: 2490684996728976643}
+  sideMovementScale: 0.85
   speed: 10
   acceleration: 30
-  sideMovementScale: 0.85
   projectilePrefab: {fileID: 1164720177896479753, guid: df573ce94d3d442dd880cb40c3845dc5, type: 3}
   projectileSpawns:
   - {fileID: 8408995934758049736}

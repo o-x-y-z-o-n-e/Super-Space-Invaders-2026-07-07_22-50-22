@@ -15,13 +15,16 @@ public class Enemy : SpaceShip, IDamageable {
 	private float health;
 	private float attackCooldown;
 
-	private void Start() {
+	protected override void Start() {
+		base.Start();
+		detectVelocity = true;
 		health = maxHealth;
 		attackCooldown = Mathf.Lerp(projectileIntervalMin, projectileIntervalMax, Random.value);
 	}
 
-	private void Update() {
+	protected override void Update() {
 		if(Core.SuspendGameLoop) return;
+		base.Update();
 		
 		if(attackCooldown > 0.0F) {
 			attackCooldown -= Time.deltaTime;

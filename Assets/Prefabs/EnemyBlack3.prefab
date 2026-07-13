@@ -450,9 +450,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   explosionPrefab: {fileID: 7288667235249262199, guid: 9b20ffd75b353755f930966d85d8eb6a, type: 3}
+  bodyRenderer: {fileID: 3382595484782395793}
   exhaustRenderer: {fileID: 2094479811842468147}
   leftTrailRenderer: {fileID: 7546073858078231450}
   rightTrailRenderer: {fileID: 3494176075714490775}
+  sideMovementScale: 0
+  speed: 0
   maxHealth: 2
   projectilePrefab: {fileID: 7214909755117908016, guid: a32dff99832959c66adab4a95350e148, type: 3}
   projectileSpawn: {fileID: 1041182044745976539}

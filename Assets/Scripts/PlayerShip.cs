@@ -7,11 +7,7 @@ public class PlayerShip : SpaceShip, IDamageable {
 	
 	public bool IsDead => health <= 0.0F;
 	
-	[Space]
-	[SerializeField] private float speed;
 	[SerializeField] private float acceleration;
-	[Space]
-	[SerializeField] private float sideMovementScale;
 	[Space]
 	[SerializeField] private Projectile projectilePrefab;
 	[SerializeField] private Transform[] projectileSpawns;
@@ -22,8 +18,6 @@ public class PlayerShip : SpaceShip, IDamageable {
 	private CircleCollider2D collider;
 	private AudioSource audio;
 	private Camera camera;
-	
-	private Vector3 velocity;
 
 	private float attackCooldown;
 	private int projectileSpawnIndex;
@@ -35,13 +29,15 @@ public class PlayerShip : SpaceShip, IDamageable {
 
 	private static List<Collider2D> lootPickupBuffer = new();
 
-	private void Awake() {
+	protected override void Awake() {
+		base.Awake();
 		renderer = GetComponentInChildren<SpriteRenderer>();
 		collider = GetComponent<CircleCollider2D>();
 		audio = GetComponent<AudioSource>();
 	}
 
-	private void Start() {
+	protected override void Start() {
+		base.Start();
 		camera = Camera.main;
 		exhaustRenderer.gameObject.SetActive(true);
 		leftTrailRenderer.gameObject.SetActive(true);
@@ -50,10 +46,12 @@ public class PlayerShip : SpaceShip, IDamageable {
 		intro = true;
 	}
 
-	private void Update() {
+	protected override void Update() {
 		if(Core.SuspendGameLoop) return;
+		base.Update();
 
 		if(intro) {
+			detectVelocity = true;
 			introTimer += Time.deltaTime;
 			float t = Mathf.Clamp01(introTimer / 1.25F);
 			t = Mathf.SmoothStep(0, 1, t);
@@ -61,6 +59,7 @@ public class PlayerShip : SpaceShip, IDamageable {
 			exhaustRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(1.0F, 2.0F, Mathf.Sin(t * Mathf.PI)), 1.0F);
 			if(t == 1.0F) {
 				intro = false;
+				detectVelocity = false;
 			} else {
 				return;
 			}
@@ -107,20 +106,6 @@ public class PlayerShip : SpaceShip, IDamageable {
 			transform.position = new Vector3(transform.position.x, cameraSizeY - bodySizeY, transform.position.z);
 			velocity.y = 0.0F;
 		}
-
-		float strafe = Mathf.Abs(velocity.x) / Mathf.Max(speed, Mathf.Epsilon);
-		leftTrailRenderer.color = new Color(1.0F, 1.0F, 1.0F, strafe);
-		rightTrailRenderer.color = new Color(1.0F, 1.0F, 1.0F, strafe);
-		leftTrailRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(0.2F, 1.0F, strafe), 1.0F);
-		rightTrailRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(0.2F, 1.0F, strafe), 1.0F);
-		renderer.transform.localScale = new Vector3(
-			Mathf.Lerp(1.0F, sideMovementScale, strafe),
-			1.0F,
-			1.0F
-		);
-		
-		float thrust = (velocity.y / Mathf.Max(speed, Mathf.Epsilon) + 1.0F) / 2.0F;
-		exhaustRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(0.5F, 2.0F, thrust), 1.0F);
 	}
 
 	private void Shooting() {
