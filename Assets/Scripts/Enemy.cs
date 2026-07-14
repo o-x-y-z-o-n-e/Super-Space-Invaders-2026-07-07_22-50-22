@@ -17,8 +17,8 @@ public class Enemy : SpaceShip, IDamageable {
 	private float health;
 	private float attackCooldown;
 
-	protected override void Start() {
-		base.Start();
+	protected override void Awake() {
+		base.Awake();
 		detectVelocity = true;
 		health = maxHealth;
 		attackCooldown = Mathf.Lerp(projectileIntervalMin, projectileIntervalMax, Random.value);
@@ -47,7 +47,7 @@ public class Enemy : SpaceShip, IDamageable {
 		
 		if(health == 0.0F) {
 			Instantiate(explosionPrefab, transform.position, transform.rotation);
-			Destroy(gameObject);
+			gameObject.SetActive(false);
 			Core.Level.AddScorePoints(scoreOnDeath);
 		}
 

@@ -47,3 +47,4 @@ MonoBehaviour:
   playerPrefab: {fileID: 6509605833360514787, guid: b1c8dbe22a26345bbb3f4b853a532db7, type: 3}
   levelStartWaitTime: 3
   waveStartWaitTime: 3
+  waveEndWaitTime: 2

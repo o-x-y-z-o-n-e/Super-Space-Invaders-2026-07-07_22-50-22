@@ -9,6 +9,7 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField] private PlayerShip playerPrefab;
 	[SerializeField] private float levelStartWaitTime;
 	[SerializeField] private float waveStartWaitTime;
+	[SerializeField] private float waveEndWaitTime;
 
 	private bool playing;
 	private int score;
@@ -17,6 +18,7 @@ public class LevelManager : MonoBehaviour {
 	private int nextGroupIndex;
 	private float levelTimer;
 	private float waveTimer;
+	private float waveFinishTime;
 
 	public void AddScorePoints(int points) {
 		score += points;
@@ -29,6 +31,7 @@ public class LevelManager : MonoBehaviour {
 		playing = true;
 		levelTimer = 0.0F;
 		waveTimer = 0.0F;
+		waveFinishTime = 0.0F;
 		Core.Gui.Find<HUD>().SetScore(0);
 		Core.Gui.Find<HUD>().ShowProgressNumberTitle("Level 1", 2.5F);
 		SpawnPlayer();
@@ -55,13 +58,36 @@ public class LevelManager : MonoBehaviour {
 		Wave currentWave = GetCurrentWave();
 		if(currentWave) {
 			waveTimer += Time.deltaTime;
-			if(waveTimer > waveStartWaitTime && nextGroupIndex < currentWave.GetGroupCount()) {
-				if(waveTimer - waveStartWaitTime >= currentWave.GetGroup(nextGroupIndex).Time) {
-					currentWave.Spawn(nextGroupIndex);
-					nextGroupIndex++;
+			if(nextGroupIndex < currentWave.GetGroupCount()) {
+				if(waveTimer > waveStartWaitTime) {
+					if(waveTimer - waveStartWaitTime >= currentWave.GetGroup(nextGroupIndex).Time) {
+						currentWave.StartGroup(nextGroupIndex);
+						nextGroupIndex++;
+					}
 				}
-			} else {
-				// TODO: check all enemies dead, then move to next wave/level
+			} else if(waveFinishTime == 0.0F) {
+				bool allDead = true;
+				for(int i = 0; i < currentWave.GetGroupCount(); i++) {
+					WaveGroup group = currentWave.GetGroup(i);
+					foreach(var enemy in group.Enemies) {
+						if(!enemy.IsDead) {
+							allDead = false;
+							break;
+						}
+					}
+					if(!allDead) break;
+				}
+				if(allDead) {
+					waveFinishTime = waveTimer;
+				}
+			}
+
+			if(waveFinishTime > 0.0F && waveTimer - waveFinishTime > waveEndWaitTime) {
+				if(currentWaveIndex + 1 < refs.GetWaves().Length) {
+					NextWave();
+				} else {
+					// TODO: next level
+				}
 			}
 		}
 	}
@@ -80,9 +106,11 @@ public class LevelManager : MonoBehaviour {
 		currentWaveIndex++;
 		nextGroupIndex = 0;
 		waveTimer = 0.0F;
+		waveFinishTime = 0.0F;
 		if(currentWaveIndex >= refs.GetWaves().Length) {
 			playing = false;
 		} else {
+			GetCurrentWave().SpawnAll();
 			Core.Gui.Find<HUD>().ShowProgressNumberTitle($"Wave {currentWaveIndex+1}", 3.0F);
 			Core.Gui.Find<HUD>().ShowWaveDescriptionTitle(GetCurrentWave().Description, 3.0F);
 		}
