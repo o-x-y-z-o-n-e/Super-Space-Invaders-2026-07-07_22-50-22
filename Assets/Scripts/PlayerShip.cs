@@ -89,10 +89,15 @@ public class PlayerShip : SpaceShip, IDamageable {
 			deathTimer -= Time.deltaTime;
 			if(deathTimer <= 0.0F) {
 				deathTimer = 0.0F;
-				introTimer = 0.0F;
-				health = 1.0F;
-				intro = true;
-				ActiveShield(4.0F);
+				if(Core.Game.PlayerLives > 0) {
+					Core.Game.PlayerLives--;
+					introTimer = 0.0F;
+					health = 1.0F;
+					intro = true;
+					ActiveShield(4.0F);
+				} else {
+					Core.Game.End(false);
+				}
 			}
 		}
 	}

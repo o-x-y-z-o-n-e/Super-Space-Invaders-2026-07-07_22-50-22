@@ -6,6 +6,12 @@ public class PauseMenu : GuiView {
 		Core.Game.SetPaused(false);
 		Core.Gui.Open<HUD>(true);
 	}
+
+	protected override void OnEnable() {
+		base.OnEnable();
+		Cursor.visible = true;
+		Cursor.lockState = CursorLockMode.None;
+	}
     
 	public void OnResumeClicked() {
 		Core.Game.SetPaused(false);

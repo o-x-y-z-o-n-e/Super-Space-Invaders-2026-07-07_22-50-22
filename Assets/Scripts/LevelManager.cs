@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Timers;
 
 public class LevelManager : MonoBehaviour {
+	
+	public int Score => score;
 
 	public bool IsPlaying => playing;
 
@@ -25,14 +27,14 @@ public class LevelManager : MonoBehaviour {
 		Core.Gui.Find<HUD>().SetScore(score);
 	}
 
-	public void StartLevel() {
+	public void Begin() {
 		refs = FindObjectOfType<LevelReferences>();
 		score = 0;
 		playing = true;
 		levelTimer = 0.0F;
 		waveTimer = 0.0F;
 		waveFinishTime = 0.0F;
-		Core.Gui.Find<HUD>().SetScore(0);
+		Core.Game.SetPaused(false);
 		Core.Gui.Find<HUD>().ShowProgressNumberTitle("Level 1", 2.5F);
 		SpawnPlayer();
 	}

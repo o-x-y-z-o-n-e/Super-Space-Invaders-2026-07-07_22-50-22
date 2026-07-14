@@ -59,6 +59,7 @@ MonoBehaviour:
   projectileSpawn: {fileID: 5809722154308557567}
   projectileIntervalMin: 3
   projectileIntervalMax: 6
+  scoreOnDeath: 40
 --- !u!58 &6571077026255042189
 CircleCollider2D:
   m_ObjectHideFlags: 0

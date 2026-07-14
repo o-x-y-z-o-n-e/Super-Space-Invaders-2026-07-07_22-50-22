@@ -31,10 +31,12 @@ public class Enemy : SpaceShip, IDamageable {
 		if(attackCooldown > 0.0F) {
 			attackCooldown -= Time.deltaTime;
 			if(attackCooldown <= 0.0F) {
-				attackCooldown = Mathf.Lerp(projectileIntervalMin, projectileIntervalMax, Random.value);
-				Projectile p = Instantiate(projectilePrefab, projectileSpawn.position, projectileSpawn.rotation);
-				p.name = projectilePrefab.name;
-				p.SetOwner(this);
+				if(!Core.Game.Finished) {
+					attackCooldown = Mathf.Lerp(projectileIntervalMin, projectileIntervalMax, Random.value);
+					Projectile p = Instantiate(projectilePrefab, projectileSpawn.position, projectileSpawn.rotation);
+					p.name = projectilePrefab.name;
+					p.SetOwner(this);
+				}
 			}
 		}
 	}

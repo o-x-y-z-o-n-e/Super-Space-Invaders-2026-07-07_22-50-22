@@ -18,10 +18,6 @@ public class HUD : GuiView {
 	private float waveDescriptionTime;
 	private float waveDescriptionTimer;
 	
-	private void Awake() {
-		
-	}
-	
 	public override void OnEscapePressed() {
 		Core.Game.SetPaused(true);
 		Core.Gui.Open<PauseMenu>(true);
@@ -35,7 +31,16 @@ public class HUD : GuiView {
 		livesText.text = lives.ToString();
 	}
 
-	private void Update() {
+	protected override void OnEnable() {
+		base.OnEnable();
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
+		SetLives(Core.Game.PlayerLives);
+		SetScore(Core.Level.Score);
+	}
+
+	protected override void Update() {
+		base.Update();
 		if(progressNumberLabel.gameObject.activeSelf) {
 			progressNumberTimer += Time.deltaTime;
 			float alpha = 1.0F;

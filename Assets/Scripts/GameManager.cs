@@ -1,27 +1,32 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
+
+	public bool Playing => playing;
+	public bool Finished => finished;
+
+	public int PlayerLives {
+		set {
+			extraLives = Mathf.Max(value, 0);
+			Core.Gui.Find<HUD>().SetLives(extraLives);
+		} 
+		get => extraLives;
+	}
 
 	public bool IsPaused => isPaused;
 	
 	private bool isPaused;
-	private int score;
-	private int lives;
-
-	private void Update() {
-		if(!Core.Level.IsPlaying) return;
-		
-	}
+	private bool playing;
+	private bool finished;
+	private int totalScore;
+	private int extraLives;
 
 	public void SetPaused(bool paused) {
 		isPaused = paused;
 		// Time.timeScale = paused ? 0 : 1;
 		Cursor.visible = paused;
 		Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
-		// if(!Application.isEditor) {
-		// 	
-		// }
-
 		if(isPaused) {
 			Core.Gui.Open<PauseMenu>(true);
 		} else {
@@ -29,33 +34,43 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	public void End(bool won) {
+		finished = true;
+		Core.Gui.Open<GameOverMenu>(true);
+	}
+
 	private void Reset() {
-		score = 0;
-		lives = 3;
+		playing = false;
+		finished = false;
+		totalScore = 0;
+		extraLives = 1;
+	}
+
+	public void ReturnToMainMenu() {
+		if(playing) SceneManager.LoadScene("Lobby");
+		Reset();
+		Core.Gui.Open<MainMenu>(true);
 	}
 
 	public void Test() {
 		Reset();
-		SetPaused(false);
-		Core.Gui.Open<HUD>(true);
-		Core.Gui.Find<HUD>().SetLives(lives);
-		Core.Level.StartLevel();
+		playing = true;
+		Core.Level.Begin();
 	}
 
 	public void New() {
 		Reset();
-		SetPaused(false);
-		Core.Gui.Open<HUD>(true);
-		Core.Gui.Find<HUD>().SetLives(lives);
-		Core.Level.StartLevel();
+		playing = true;
+		SceneManager.LoadScene("Level1");
+		Core.Level.Begin();
 	}
 
 	public void Load() {
 		Reset();
-		SetPaused(false);
-		Core.Gui.Open<HUD>(true);
-		Core.Gui.Find<HUD>().SetLives(lives);
-		Core.Level.StartLevel();
+		playing = true;
+		string level = "Level1";
+		SceneManager.LoadScene(level);
+		Core.Level.Begin();
 	}
 
 }
