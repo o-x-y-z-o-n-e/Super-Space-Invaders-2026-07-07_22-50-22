@@ -28,7 +28,7 @@ public class LevelManager : MonoBehaviour {
 	}
 
 	public void Begin() {
-		refs = FindObjectOfType<LevelReferences>();
+		refs = FindAnyObjectByType<LevelReferences>();
 		score = 0;
 		playing = true;
 		levelTimer = 0.0F;

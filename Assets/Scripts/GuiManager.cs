@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GuiManager : MonoBehaviour {
 	
@@ -9,6 +11,12 @@ public class GuiManager : MonoBehaviour {
 	private Stack<GuiView> viewStack;
 	
 	[SerializeField] private GuiView defaultView;
+	[SerializeField] private Image screenTransition;
+	
+	private bool screenTransitionFade;
+	private float screenTransitionTime;
+	private Action screenTransitionOnClose;
+	private Action screenTransitionOnOpen;
 
 	private void Awake() {
 		canvas = GetComponent<Canvas>();
@@ -28,8 +36,25 @@ public class GuiManager : MonoBehaviour {
 	}
 
 	private void Update() {
-		if(Input.GetKeyDown(KeyCode.Escape)) {
-			viewStack.Peek()?.OnEscapePressed();
+		if(screenTransition.gameObject.activeSelf) {
+			if(screenTransitionFade) {
+				screenTransitionTime = Mathf.Clamp01(screenTransitionTime + Time.deltaTime);
+				if(screenTransitionTime == 1.0F) {
+					screenTransitionFade = false;
+					screenTransitionOnClose?.Invoke();
+				}
+			} else {
+				screenTransitionTime = Mathf.Clamp01(screenTransitionTime - Time.deltaTime);
+				if(screenTransitionTime == 0.0F) {
+					screenTransition.gameObject.SetActive(false);
+					screenTransitionOnOpen?.Invoke();
+				}
+			}
+			screenTransition.color = new Color(0, 0, 0, Mathf.SmoothStep(0, 1, screenTransitionTime));
+		} else {
+			if(Input.GetKeyDown(KeyCode.Escape)) {
+				viewStack.Peek()?.OnEscapePressed();
+			}
 		}
 	}
 
@@ -77,6 +102,15 @@ public class GuiManager : MonoBehaviour {
 		if(viewStack.Count > 0) {
 			viewStack.Peek().gameObject.SetActive(true);
 		}
+	}
+
+	public void Transition(Action onClose = null, Action onOpen = null) {
+		screenTransitionFade = true;
+		screenTransitionTime = 0.0F;
+		screenTransitionOnClose = onClose;
+		screenTransitionOnOpen = onOpen;
+		screenTransition.color = new Color(0, 0, 0, 0);
+		screenTransition.gameObject.SetActive(true);
 	}
     
 }

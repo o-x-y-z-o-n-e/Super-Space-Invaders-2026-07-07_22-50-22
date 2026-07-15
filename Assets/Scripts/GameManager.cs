@@ -60,16 +60,16 @@ public class GameManager : MonoBehaviour {
 
 	public void New() {
 		Reset();
-		playing = true;
 		SceneManager.LoadScene("Level1");
+		playing = true;
 		Core.Level.Begin();
 	}
 
 	public void Load() {
 		Reset();
-		playing = true;
 		string level = "Level1";
 		SceneManager.LoadScene(level);
+		playing = true;
 		Core.Level.Begin();
 	}
 
