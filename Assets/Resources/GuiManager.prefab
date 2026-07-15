@@ -823,6 +823,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GuiManager
   defaultView: {fileID: 0}
   screenTransition: {fileID: 2226956598472966527}
+  screenTransitionTime: 0.5
 --- !u!1 &1415617937401947343
 GameObject:
   m_ObjectHideFlags: 0

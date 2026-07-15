@@ -12,9 +12,10 @@ public class GuiManager : MonoBehaviour {
 	
 	[SerializeField] private GuiView defaultView;
 	[SerializeField] private Image screenTransition;
+	[SerializeField] private float screenTransitionTime;
 	
 	private bool screenTransitionFade;
-	private float screenTransitionTime;
+	private float screenTransitionTimer;
 	private Action screenTransitionOnClose;
 	private Action screenTransitionOnOpen;
 
@@ -38,19 +39,21 @@ public class GuiManager : MonoBehaviour {
 	private void Update() {
 		if(screenTransition.gameObject.activeSelf) {
 			if(screenTransitionFade) {
-				screenTransitionTime = Mathf.Clamp01(screenTransitionTime + Time.deltaTime);
-				if(screenTransitionTime == 1.0F) {
+				screenTransitionTimer += Time.deltaTime;
+				if(screenTransitionTimer >= screenTransitionTime) {
+					screenTransitionTimer = screenTransitionTime;
 					screenTransitionFade = false;
 					screenTransitionOnClose?.Invoke();
 				}
 			} else {
-				screenTransitionTime = Mathf.Clamp01(screenTransitionTime - Time.deltaTime);
-				if(screenTransitionTime == 0.0F) {
+				screenTransitionTimer -= Time.deltaTime;
+				if(screenTransitionTimer <= 0.0F) {
+					screenTransitionTimer = 0.0F;
 					screenTransition.gameObject.SetActive(false);
 					screenTransitionOnOpen?.Invoke();
 				}
 			}
-			screenTransition.color = new Color(0, 0, 0, Mathf.SmoothStep(0, 1, screenTransitionTime));
+			screenTransition.color = new Color(0, 0, 0, Mathf.SmoothStep(0, 1, screenTransitionTimer / screenTransitionTime));
 		} else {
 			if(Input.GetKeyDown(KeyCode.Escape)) {
 				viewStack.Peek()?.OnEscapePressed();
@@ -106,7 +109,7 @@ public class GuiManager : MonoBehaviour {
 
 	public void Transition(Action onClose = null, Action onOpen = null) {
 		screenTransitionFade = true;
-		screenTransitionTime = 0.0F;
+		screenTransitionTimer = 0.0F;
 		screenTransitionOnClose = onClose;
 		screenTransitionOnOpen = onOpen;
 		screenTransition.color = new Color(0, 0, 0, 0);

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Timers;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour {
 	
@@ -15,7 +16,7 @@ public class LevelManager : MonoBehaviour {
 
 	private bool playing;
 	private int score;
-	private LevelReferences refs;
+	private Wave[] waves;
 	private int currentWaveIndex;
 	private int nextGroupIndex;
 	private float levelTimer;
@@ -27,8 +28,19 @@ public class LevelManager : MonoBehaviour {
 		Core.Gui.Find<HUD>().SetScore(score);
 	}
 
-	public void Begin() {
-		refs = FindAnyObjectByType<LevelReferences>();
+	private void Awake() {
+		SceneManager.sceneLoaded += OnSceneLoaded;
+	}
+
+	// public void Test() {
+	// 	OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+	// }
+
+	private void OnSceneLoaded(Scene scene, LoadSceneMode loadMode) {
+		var refs = GameObject.FindAnyObjectByType<LevelReferences>();
+		if(!refs) return;
+		Debug.Log("test2");
+		waves = refs.GetWaves();
 		score = 0;
 		playing = true;
 		levelTimer = 0.0F;
@@ -40,8 +52,8 @@ public class LevelManager : MonoBehaviour {
 	}
 
 	private Wave GetCurrentWave() {
-		if(currentWaveIndex >= 0 && currentWaveIndex < refs.GetWaves().Length) {
-			return refs.GetWaves()[currentWaveIndex];
+		if(currentWaveIndex >= 0 && currentWaveIndex < waves.Length) {
+			return waves[currentWaveIndex];
 		} else {
 			return null;
 		}
@@ -85,11 +97,12 @@ public class LevelManager : MonoBehaviour {
 			}
 
 			if(waveFinishTime > 0.0F && waveTimer - waveFinishTime > waveEndWaitTime) {
-				if(currentWaveIndex + 1 < refs.GetWaves().Length) {
-					NextWave();
-				} else {
-					// TODO: next level
-				}
+				NextWave();
+				// if(currentWaveIndex + 1 < waves.Length) {
+				// 	NextWave();
+				// } else {
+				// 	// TODO: next level
+				// }
 			}
 		}
 	}
@@ -109,8 +122,9 @@ public class LevelManager : MonoBehaviour {
 		nextGroupIndex = 0;
 		waveTimer = 0.0F;
 		waveFinishTime = 0.0F;
-		if(currentWaveIndex >= refs.GetWaves().Length) {
+		if(currentWaveIndex >= waves.Length) {
 			playing = false;
+			FindAnyObjectByType<PlayerShip>().BeginOutro();
 		} else {
 			GetCurrentWave().SpawnAll();
 			Core.Gui.Find<HUD>().ShowProgressNumberTitle($"Wave {currentWaveIndex+1}", 3.0F);

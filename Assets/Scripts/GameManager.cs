@@ -55,22 +55,20 @@ public class GameManager : MonoBehaviour {
 	public void Test() {
 		Reset();
 		playing = true;
-		Core.Level.Begin();
+		Debug.Log("test1");
 	}
 
 	public void New() {
 		Reset();
-		SceneManager.LoadScene("Level1");
 		playing = true;
-		Core.Level.Begin();
+		SceneManager.LoadScene("Level1", LoadSceneMode.Single);
 	}
 
 	public void Load() {
 		Reset();
-		string level = "Level1";
-		SceneManager.LoadScene(level);
 		playing = true;
-		Core.Level.Begin();
+		string level = "Level1";
+		SceneManager.LoadScene(level, LoadSceneMode.Single);
 	}
 
 }

@@ -15,7 +15,7 @@ public class MainMenu : GuiView {
 
 	public void OnStartCliked() {
 		// Core.Gui.Open<StartMenu>();
-		Core.Game.New();
+		Core.Gui.Transition(Core.Game.New);
 	}
 
 	public void OnLoadClicked() {

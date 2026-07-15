@@ -30,10 +30,16 @@ public class PlayerShip : SpaceShip, IDamageable {
 
 	private bool intro;
 	private float introTimer;
+
+	private bool outro;
+	private float outroTimer;
 	
 	private float deathTimer;
 
 	private float shieldTimer;
+
+	private Vector2 extraVelocity;
+	private bool lockVerticalMovementInput;
 
 	private static List<Collider2D> lootPickupBuffer = new();
 
@@ -52,6 +58,8 @@ public class PlayerShip : SpaceShip, IDamageable {
 		rightTrailRenderer.gameObject.SetActive(true);
 		health = 1.0F;
 		intro = true;
+		extraVelocity = Vector2.zero;
+		transform.position = new Vector3(0, -11, 0);
 	}
 
 	protected override void Update() {
@@ -61,9 +69,14 @@ public class PlayerShip : SpaceShip, IDamageable {
 		Shield();
 		Death();
 		Intro();
+		Outro();
 		Movement();
 		Shooting();
 		Looting();
+	}
+
+	public void BeginOutro() {
+		outro = true;
 	}
 
 	private void Shield() {
@@ -103,36 +116,63 @@ public class PlayerShip : SpaceShip, IDamageable {
 	}
 
 	private void Intro() {
-		if(intro) {
-			detectVelocity = true;
-			introTimer += Time.deltaTime;
-			float t = Mathf.Clamp01(introTimer / 1.25F);
-			t = Mathf.SmoothStep(0, 1, t);
-			transform.position = Vector3.Lerp(new Vector3(0, -11, 0), new Vector3(0, -6, 0), t);
-			exhaustRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(1.0F, 2.0F, Mathf.Sin(t * Mathf.PI)), 1.0F);
-			if(t == 1.0F) {
-				intro = false;
-				detectVelocity = false;
-			}
+		if(!intro || outro) return;
+		detectVelocity = true;
+		lockVerticalMovementInput = true;
+		introTimer += Time.deltaTime;
+		float length = 1.0F;
+		float deccTime = 1.0F;
+		float t = Mathf.Clamp01(introTimer / length);
+		t = Mathf.SmoothStep(0, 1, t);
+		extraVelocity = Vector2.Lerp(new Vector2(0, 1.0F), Vector2.zero, (introTimer - (length - deccTime)) / deccTime);
+		// transform.position = Vector3.Lerp(new Vector3(0, -11, 0), new Vector3(0, -6, 0), t);
+		// exhaustRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(1.0F, 2.0F, Mathf.Sin(t * Mathf.PI)), 1.0F);
+		if(t == 1.0F) {
+			intro = false;
+			detectVelocity = false;
+			lockVerticalMovementInput = false;
+		}
+	}
+
+	private void Outro() {
+		if(!outro || intro) return;
+		detectVelocity = true;
+		lockVerticalMovementInput = true;
+		outroTimer += Time.deltaTime;
+		float accTime = 2.0F;
+		extraVelocity = Vector2.Lerp(Vector2.zero, new Vector2(0, speed), Mathf.Clamp01(outroTimer / accTime));
+		if(transform.position.y > 12) {
+			outro = false;
+			detectVelocity = false;
+			gameObject.SetActive(false);
+			
+			// TODO: replace
+			// Core.Game.ReturnToMainMenu();
 		}
 	}
 
 	private void Movement() {
-		if(intro) return;
 		if(IsDead) return;
 
-		float x = Input.GetAxis("Horizontal");// + Input.GetAxis("Mouse X") * 20;
-		float y = Input.GetAxis("Vertical");// + Input.GetAxis("Mouse Y") * 20;
+		float x = Input.GetAxisRaw("Horizontal");// + Input.GetAxisRaw("Mouse X") * 20;
+		float y = Input.GetAxisRaw("Vertical");// + Input.GetAxisRaw("Mouse Y") * 20;
 		x = Mathf.Clamp(x, -1, 1);
 		y = Mathf.Clamp(y, -1, 1);
+
+		if(lockVerticalMovementInput) {
+			y = 0.0F;
+		}
 		
 		Vector2 size = renderer.sprite.bounds.size;
 		
 		Vector2 targetVelocity = new Vector2(x, y) * speed;
 		
 		velocity = Vector2.MoveTowards(velocity, targetVelocity, acceleration * Time.deltaTime);
-		
-		transform.position += velocity * Time.deltaTime;
+
+		Vector2 p = transform.position;
+		p += velocity * Time.deltaTime;
+		p += extraVelocity * Time.deltaTime;
+		transform.position = p;
 
 		float cameraSizeY = camera.orthographicSize;
 		float cameraSizeX = cameraSizeY * camera.aspect;
@@ -143,20 +183,19 @@ public class PlayerShip : SpaceShip, IDamageable {
 			transform.position = new Vector3(-cameraSizeX + bodySizeX, transform.position.y, transform.position.z);
 			velocity.x = 0.0F;
 		}
-		
 		if(transform.position.x > cameraSizeX - bodySizeX) {
 			transform.position = new Vector3(cameraSizeX - bodySizeX, transform.position.y, transform.position.z);
 			velocity.x = 0.0F;
 		}
-		
-		if(transform.position.y < -cameraSizeY + bodySizeY) {
-			transform.position = new Vector3(transform.position.x, -cameraSizeY + bodySizeY, transform.position.z);
-			velocity.y = 0.0F;
-		}
-		
-		if(transform.position.y > cameraSizeY - bodySizeY) {
-			transform.position = new Vector3(transform.position.x, cameraSizeY - bodySizeY, transform.position.z);
-			velocity.y = 0.0F;
+		if(!lockVerticalMovementInput) {
+			if(transform.position.y < -cameraSizeY + bodySizeY) {
+				transform.position = new Vector3(transform.position.x, -cameraSizeY + bodySizeY, transform.position.z);
+				velocity.y = 0.0F;
+			}
+			if(transform.position.y > cameraSizeY - bodySizeY) {
+				transform.position = new Vector3(transform.position.x, cameraSizeY - bodySizeY, transform.position.z);
+				velocity.y = 0.0F;
+			}
 		}
 	}
 

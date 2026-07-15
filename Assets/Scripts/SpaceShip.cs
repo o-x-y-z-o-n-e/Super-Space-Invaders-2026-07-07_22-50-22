@@ -13,8 +13,8 @@ public class SpaceShip : MonoBehaviour {
 	[Space]
 	[SerializeField] protected float speed;
 
-	private Vector3 lastPosition;
-	protected Vector3 velocity;
+	private Vector2 lastPosition;
+	protected Vector2 velocity;
 	protected bool detectVelocity;
 
 	protected virtual void Awake() {
@@ -40,7 +40,8 @@ public class SpaceShip : MonoBehaviour {
 	protected virtual void LateUpdate() {
 		if(Core.SuspendGameLoop) return;
 		if(detectVelocity) {
-			velocity = transform.position - lastPosition;
+			Vector2 p = transform.position;
+			velocity = p - lastPosition;
 			velocity /= Mathf.Max(Time.deltaTime, Mathf.Epsilon);
 		}
 		float strafe = Mathf.Abs(velocity.x) / Mathf.Max(speed, Mathf.Epsilon);
