@@ -117,37 +117,34 @@ public class PlayerShip : SpaceShip, IDamageable {
 
 	private void Intro() {
 		if(!intro || outro) return;
-		detectVelocity = true;
+		//detectVelocity = true;
 		lockVerticalMovementInput = true;
 		introTimer += Time.deltaTime;
 		float length = 1.0F;
-		float deccTime = 1.0F;
-		float t = Mathf.Clamp01(introTimer / length);
-		t = Mathf.SmoothStep(0, 1, t);
-		extraVelocity = Vector2.Lerp(new Vector2(0, 1.0F), Vector2.zero, (introTimer - (length - deccTime)) / deccTime);
-		// transform.position = Vector3.Lerp(new Vector3(0, -11, 0), new Vector3(0, -6, 0), t);
-		// exhaustRenderer.transform.localScale = new Vector3(1.0F, Mathf.Lerp(1.0F, 2.0F, Mathf.Sin(t * Mathf.PI)), 1.0F);
+		float deccTime = 0.5F;
+		float t = Mathf.Clamp01((introTimer - (length - deccTime)) / deccTime);
+		extraVelocity = Vector2.Lerp(new Vector2(0, speed), Vector2.zero, t);
 		if(t == 1.0F) {
 			intro = false;
 			detectVelocity = false;
+			extraVelocity = Vector2.zero;
 			lockVerticalMovementInput = false;
 		}
 	}
 
 	private void Outro() {
 		if(!outro || intro) return;
-		detectVelocity = true;
+		//detectVelocity = true;
 		lockVerticalMovementInput = true;
 		outroTimer += Time.deltaTime;
-		float accTime = 2.0F;
-		extraVelocity = Vector2.Lerp(Vector2.zero, new Vector2(0, speed), Mathf.Clamp01(outroTimer / accTime));
+		float accTime = 1.0F;
+		extraVelocity = Vector2.Lerp(Vector2.zero, new Vector2(0, speed * 1.5F), Mathf.Clamp01(outroTimer / accTime));
 		if(transform.position.y > 12) {
 			outro = false;
 			detectVelocity = false;
+			extraVelocity = Vector2.zero;
 			gameObject.SetActive(false);
-			
-			// TODO: replace
-			// Core.Game.ReturnToMainMenu();
+			Core.Gui.Transition(Core.Game.NextLevel);
 		}
 	}
 

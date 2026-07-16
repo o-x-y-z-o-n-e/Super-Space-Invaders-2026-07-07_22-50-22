@@ -44,4 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe65f81459b0b4f5195caa9175736a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  IsPaused: 0
+  levelScenes:
+  - Level1
+  - Level2

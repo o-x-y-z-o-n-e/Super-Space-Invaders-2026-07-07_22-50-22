@@ -15,12 +15,15 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public bool IsPaused => isPaused;
+
+	[SerializeField] private string[] levelScenes;
 	
 	private bool isPaused;
 	private bool playing;
 	private bool finished;
 	private int totalScore;
 	private int extraLives;
+	private int currentLevelIndex;
 
 	public void SetPaused(bool paused) {
 		isPaused = paused;
@@ -44,6 +47,7 @@ public class GameManager : MonoBehaviour {
 		finished = false;
 		totalScore = 0;
 		extraLives = 1;
+		currentLevelIndex = 0;
 	}
 
 	public void ReturnToMainMenu() {
@@ -55,20 +59,35 @@ public class GameManager : MonoBehaviour {
 	public void Test() {
 		Reset();
 		playing = true;
-		Debug.Log("test1");
+		for(int i = 0; i < levelScenes.Length; i++) {
+			if(SceneManager.GetActiveScene().name == levelScenes[i]) {
+				currentLevelIndex = i;
+				break;
+			}
+		}
 	}
 
 	public void New() {
 		Reset();
 		playing = true;
-		SceneManager.LoadScene("Level1", LoadSceneMode.Single);
+		SceneManager.LoadScene(levelScenes[currentLevelIndex], LoadSceneMode.Single);
 	}
 
 	public void Load() {
 		Reset();
 		playing = true;
-		string level = "Level1";
-		SceneManager.LoadScene(level, LoadSceneMode.Single);
+		currentLevelIndex = 0;
+		SceneManager.LoadScene(levelScenes[currentLevelIndex], LoadSceneMode.Single);
+	}
+
+	public void NextLevel() {
+		currentLevelIndex++;
+		if(currentLevelIndex < levelScenes.Length) {
+			SceneManager.LoadScene(levelScenes[currentLevelIndex], LoadSceneMode.Single);
+		} else {
+			// TODO: end game
+			ReturnToMainMenu();
+		}
 	}
 
 }

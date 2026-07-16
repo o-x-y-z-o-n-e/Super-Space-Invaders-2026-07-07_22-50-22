@@ -34,7 +34,7 @@ public static class Core {
 			guiManager.Open<MainMenu>(true);
 		} else {
 			gameManager.Test();
-			// levelManager.Test();
+			levelManager.Test();
 		}
 	}
 

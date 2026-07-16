@@ -28,18 +28,18 @@ public class LevelManager : MonoBehaviour {
 		Core.Gui.Find<HUD>().SetScore(score);
 	}
 
-	private void Awake() {
+	private void Start() {
 		SceneManager.sceneLoaded += OnSceneLoaded;
+		SceneManager.sceneUnloaded += OnSceneUnloaded;
 	}
 
-	// public void Test() {
-	// 	OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
-	// }
+	public void Test() {
+		OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+	}
 
 	private void OnSceneLoaded(Scene scene, LoadSceneMode loadMode) {
 		var refs = GameObject.FindAnyObjectByType<LevelReferences>();
 		if(!refs) return;
-		Debug.Log("test2");
 		waves = refs.GetWaves();
 		score = 0;
 		playing = true;
@@ -49,6 +49,19 @@ public class LevelManager : MonoBehaviour {
 		Core.Game.SetPaused(false);
 		Core.Gui.Find<HUD>().ShowProgressNumberTitle("Level 1", 2.5F);
 		SpawnPlayer();
+	}
+
+	private void OnSceneUnloaded(Scene scene) {
+		if(scene.buildIndex > 0) {
+			playing = false;
+			score = 0;
+			waves = null;
+			currentWaveIndex = -1;
+			nextGroupIndex = -1;
+			levelTimer = 0.0F;
+			waveTimer = 0.0F;
+			waveFinishTime = 0.0F;
+		}
 	}
 
 	private Wave GetCurrentWave() {
