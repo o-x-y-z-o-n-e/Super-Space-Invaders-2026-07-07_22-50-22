@@ -85,8 +85,7 @@ public class GameManager : MonoBehaviour {
 		if(currentLevelIndex < levelScenes.Length) {
 			SceneManager.LoadScene(levelScenes[currentLevelIndex], LoadSceneMode.Single);
 		} else {
-			// TODO: end game
-			ReturnToMainMenu();
+			Core.Gui.Open<GameWinMenu>(true);
 		}
 	}
 
