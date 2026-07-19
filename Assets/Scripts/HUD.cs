@@ -6,7 +6,7 @@ public class HUD : GuiView {
 
 	private const float TITLE_LABEL_FADE = 0.15F;
 
-	[SerializeField] private Slider healthBar;
+	[SerializeField] private Slider weaponCooldown;
 	[SerializeField] private TMP_Text scoreText;
 	[SerializeField] private TMP_Text livesText;
 	[SerializeField] private TMP_Text powerText;
@@ -85,6 +85,10 @@ public class HUD : GuiView {
 		waveDescriptionLabel.gameObject.SetActive(true);
 		waveDescriptionTime = time;
 		waveDescriptionTimer = 0.0F;
+	}
+
+	public void SetWeaponCooldown(float cooldown) {
+		weaponCooldown.value = cooldown;
 	}
 
 }

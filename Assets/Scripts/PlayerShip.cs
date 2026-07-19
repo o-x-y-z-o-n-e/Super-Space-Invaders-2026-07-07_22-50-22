@@ -8,23 +8,20 @@ public class PlayerShip : SpaceShip, IDamageable {
 	private const float SHIELD_FADE_TIME = 0.5F;
 	
 	public bool IsDead => health <= 0.0F;
+
+	public bool InIntro => intro;
+	public bool InOutro => outro;
 	
 	[SerializeField] private float acceleration;
 	[Space]
-	[SerializeField] private Projectile projectilePrefab;
-	[SerializeField] private Transform[] projectileSpawns;
-	[Space]
-	[SerializeField] private float attackInterval;
-	[Space]
 	[SerializeField] private SpriteRenderer shieldRenderer;
+	[Space]
+	[SerializeField] private PlayerWeapon[] weapons;
     
 	private SpriteRenderer renderer;
 	private CircleCollider2D collider;
 	private AudioSource audio;
 	private Camera camera;
-
-	private float attackCooldown;
-	private int projectileSpawnIndex;
 
 	private float health;
 
@@ -71,7 +68,6 @@ public class PlayerShip : SpaceShip, IDamageable {
 		Intro();
 		Outro();
 		Movement();
-		Shooting();
 		Looting();
 	}
 
@@ -120,8 +116,8 @@ public class PlayerShip : SpaceShip, IDamageable {
 		//detectVelocity = true;
 		lockVerticalMovementInput = true;
 		introTimer += Time.deltaTime;
-		float length = 1.0F;
-		float deccTime = 0.5F;
+		float length = 0.8F;
+		float deccTime = 0.4F;
 		float t = Mathf.Clamp01((introTimer - (length - deccTime)) / deccTime);
 		extraVelocity = Vector2.Lerp(new Vector2(0, speed), Vector2.zero, t);
 		if(t == 1.0F) {
@@ -196,28 +192,6 @@ public class PlayerShip : SpaceShip, IDamageable {
 		}
 	}
 
-	private void Shooting() {
-		if(intro) return;
-		if(IsDead) return;
-		
-		if(attackCooldown > 0.0F) {
-			attackCooldown -= Time.deltaTime;
-			if(attackCooldown < 0.0F) attackCooldown = 0.0F;
-		}
-		
-		if(attackCooldown > 0.0F) return;
-		if(!Input.GetKey(KeyCode.Space)) return;
-		if(projectileSpawns.Length == 0) return;
-		
-		Transform spawn = projectileSpawns[projectileSpawnIndex];
-		Projectile p = Instantiate(projectilePrefab, spawn.position, spawn.rotation);
-		p.name = projectilePrefab.name;
-		p.SetOwner(this);
-		
-		projectileSpawnIndex = (projectileSpawnIndex + 1) % projectileSpawns.Length;
-		attackCooldown = attackInterval;
-	}
-
 	public bool ApplyDamage(float amount) {
 		if(IsDead) return false;
 		if(amount <= 0.0F) return false;
@@ -262,6 +236,17 @@ public class PlayerShip : SpaceShip, IDamageable {
 			audio.PlayOneShot(loot.PickupSound.Clip, loot.PickupSound.Volume);
 		}
 		Destroy(loot.gameObject);
+	}
+
+	public void SetWeapon(int weaponIndex) {
+		if(weaponIndex < 0 || weaponIndex >= weapons.Length) return;
+		for(int i = 0; i < weapons.Length; i++) {
+			if(i == weaponIndex) continue;
+			if(weapons[i].gameObject.activeSelf) {
+				weapons[i].gameObject.SetActive(false);
+			}
+		}
+		weapons[weaponIndex].gameObject.SetActive(false);
 	}
 
 }

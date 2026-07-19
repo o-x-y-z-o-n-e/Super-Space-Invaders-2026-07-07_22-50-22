@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 public class Projectile : MonoBehaviour {
 
+	public float Radius => radius;
+	public float Length => length;
+
 	[SerializeField] private float radius;
+	[SerializeField] private float length;
 	[SerializeField] private float speed;
 	[SerializeField] private float damage;
 	[SerializeField] private LayerMask layerMask;
@@ -75,6 +79,7 @@ public class Projectile : MonoBehaviour {
 
 	private void OnDrawGizmos() {
 		Gizmos.DrawWireSphere(transform.position, radius);
+		Gizmos.DrawLine(transform.position, transform.position - transform.up * length);
 	}
 
 }
