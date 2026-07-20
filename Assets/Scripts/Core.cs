@@ -10,6 +10,7 @@ public static class Core {
 	public static LevelManager Level => levelManager;
 	public static GuiManager Gui => guiManager;
 
+	private static ObjectManager objectManager;
 	private static Camera cameraManager;
 	private static GameManager gameManager;
 	private static LevelManager levelManager;
@@ -17,6 +18,10 @@ public static class Core {
 	
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
 	private static void OnUnityLoaded() {
+		objectManager = GameObject.Instantiate(Resources.Load<ObjectManager>("ObjectManager"));
+		objectManager.name = "ObjectManager";
+		GameObject.DontDestroyOnLoad(objectManager);
+		
 		cameraManager = GameObject.Instantiate(Resources.Load<Camera>("CameraManager"));
 		cameraManager.name = "CameraManager";
 		GameObject.DontDestroyOnLoad(cameraManager);
