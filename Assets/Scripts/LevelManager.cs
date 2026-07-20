@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour {
 	
+	public float LevelStartWaitTime => levelStartWaitTime;
+	public float WaveStartWaitTime => waveStartWaitTime;
+	public float WaveEndWaitTime => waveEndWaitTime;
+	
 	public int Score => score;
 
 	public bool IsPlaying => playing;
@@ -18,9 +22,7 @@ public class LevelManager : MonoBehaviour {
 	private int score;
 	private Wave[] waves;
 	private int currentWaveIndex;
-	private int nextGroupIndex;
 	private float levelTimer;
-	private float waveTimer;
 	private float waveFinishTime;
 
 	public void AddScorePoints(int points) {
@@ -44,7 +46,6 @@ public class LevelManager : MonoBehaviour {
 		score = 0;
 		playing = true;
 		levelTimer = 0.0F;
-		waveTimer = 0.0F;
 		waveFinishTime = 0.0F;
 		Core.Game.SetPaused(false);
 		Core.Gui.Find<HUD>().ShowProgressNumberTitle("Level 1", 2.5F);
@@ -57,9 +58,7 @@ public class LevelManager : MonoBehaviour {
 			score = 0;
 			waves = null;
 			currentWaveIndex = -1;
-			nextGroupIndex = -1;
 			levelTimer = 0.0F;
-			waveTimer = 0.0F;
 			waveFinishTime = 0.0F;
 		}
 	}
@@ -80,42 +79,18 @@ public class LevelManager : MonoBehaviour {
 
 		if(levelTimer - Time.deltaTime < levelStartWaitTime && levelTimer >= levelStartWaitTime) {
 			FirstWave();
+			return;
 		}
 
 		Wave currentWave = GetCurrentWave();
 		if(currentWave) {
-			waveTimer += Time.deltaTime;
-			if(nextGroupIndex < currentWave.GetGroupCount()) {
-				if(waveTimer > waveStartWaitTime) {
-					if(waveTimer - waveStartWaitTime >= currentWave.GetGroup(nextGroupIndex).Time) {
-						currentWave.StartGroup(nextGroupIndex);
-						nextGroupIndex++;
-					}
-				}
-			} else if(waveFinishTime == 0.0F) {
-				bool allDead = true;
-				for(int i = 0; i < currentWave.GetGroupCount(); i++) {
-					WaveGroup group = currentWave.GetGroup(i);
-					foreach(var enemy in group.Enemies) {
-						if(!enemy.IsDead) {
-							allDead = false;
-							break;
-						}
-					}
-					if(!allDead) break;
-				}
-				if(allDead) {
-					waveFinishTime = waveTimer;
+			if(waveFinishTime == 0.0F) {
+				if(currentWave.IsFinished()) {
+					waveFinishTime = currentWave.Timer;
 				}
 			}
-
-			if(waveFinishTime > 0.0F && waveTimer - waveFinishTime > waveEndWaitTime) {
+			if(waveFinishTime > 0.0F && currentWave.Timer - waveFinishTime > waveEndWaitTime) {
 				NextWave();
-				// if(currentWaveIndex + 1 < waves.Length) {
-				// 	NextWave();
-				// } else {
-				// 	// TODO: next level
-				// }
 			}
 		}
 	}
@@ -131,15 +106,16 @@ public class LevelManager : MonoBehaviour {
 	}
 	
 	private void NextWave() {
+		if(currentWaveIndex >= 0) {
+			waves[currentWaveIndex].gameObject.SetActive(false);
+		}
 		currentWaveIndex++;
-		nextGroupIndex = 0;
-		waveTimer = 0.0F;
 		waveFinishTime = 0.0F;
 		if(currentWaveIndex >= waves.Length) {
 			playing = false;
 			FindAnyObjectByType<PlayerShip>().BeginOutro();
 		} else {
-			GetCurrentWave().SpawnAll();
+			waves[currentWaveIndex].gameObject.SetActive(true);
 			Core.Gui.Find<HUD>().ShowProgressNumberTitle($"Wave {currentWaveIndex+1}", 3.0F);
 			Core.Gui.Find<HUD>().ShowWaveDescriptionTitle(GetCurrentWave().Description, 3.0F);
 		}

@@ -5,6 +5,7 @@ public static class Core {
 
 	public static bool SuspendGameLoop => gameManager.IsPaused && levelManager.IsPlaying;
 	
+	public static Camera Camera => cameraManager;
 	public static GameManager Game => gameManager;
 	public static LevelManager Level => levelManager;
 	public static GuiManager Gui => guiManager;

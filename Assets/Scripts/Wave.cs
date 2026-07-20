@@ -3,56 +3,45 @@ using UnityEngine.Splines;
 using Unity.Mathematics;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(SplineContainer))]
 public class Wave : MonoBehaviour {
-	
-	public WaveType Type => type;
+
+	public float Timer => timer;
 	public string Description => description;
 
-	[SerializeField] private WaveType type;
 	[SerializeField] private string description;
-	[SerializeField] private List<WaveGroup> groups;
 
-	private SplineContainer splines;
+	protected float timer;
+	protected SplineContainer splines;
 
-	private void Awake() {
+	protected virtual void Awake() {
 		splines = GetComponent<SplineContainer>();
+		gameObject.SetActive(false);
 	}
 
-	public int GetGroupCount() {
-		return groups.Count;
-	}
-	
-	public WaveGroup GetGroup(int index) {
-		return groups[index];
+	protected virtual void OnEnable() {
+		
 	}
 
-	private void OnValidate() {
-		// TODO: reorder groups, based on timestamp
-	}
-	
-	public void StartGroup(int groupIndex) {
-		if(groupIndex >= splines.Splines.Count) return;
-		if(groupIndex >= groups.Count) return;
-		groups[groupIndex].StartAll(splines.Splines[groupIndex]);
+	protected virtual void OnDisable() {
+		
 	}
 
-	public void SpawnAll() {
-		foreach(var group in groups) {
-			group.SpawnAll();
-		}
+	protected virtual void Start() {
+		timer = 0.0F;
 	}
 
-	public void DestroyAll() {
-		foreach(var group in groups) {
-			group.DestroyAll();
-		}
+	protected virtual void Update() {
+		timer += Time.deltaTime;
+	}
+
+	public virtual bool IsFinished() {
+		return false;
 	}
 	
 }
 
 [System.Serializable]
-public class WaveGroup {
+public class WaveEnemyGroup {
 
 	public float Time => time;
 	
@@ -63,13 +52,14 @@ public class WaveGroup {
 
 	private List<Enemy> instances;
 
-	public void SpawnAll() {
+	public IEnumerable<Enemy> SpawnAll() {
 		instances = new();
 		for(int i = 0; i < prefabs.Count; i++) {
 			Enemy instance = GameObject.Instantiate(prefabs[i]);
 			instance.name = prefabs[i].name;
 			instance.gameObject.SetActive(false);
 			instances.Add(instance);
+			yield return instance;
 		}
 	}
 
@@ -86,15 +76,12 @@ public class WaveGroup {
 	}
 
 	public void DestroyAll() {
+		if(instances == null) return;
 		for(int i = 0; i < instances.Count; i++) {
+			if(instances[i] == null) continue;
 			GameObject.Destroy(instances[i].gameObject);
 		}
 		instances = null;
 	}
 	
-}
-
-public enum WaveType {
-	PathToFormation,
-	PathToOffScreen,
 }
