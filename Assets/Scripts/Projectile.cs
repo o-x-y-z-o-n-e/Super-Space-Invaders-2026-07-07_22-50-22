@@ -34,6 +34,7 @@ public class Projectile : MonoBehaviour {
 	}
 	
 	private void Start() {
+		lastPosition = transform.position;
 		velocity = transform.up * speed;
 		camera = Camera.main;
 	}

@@ -1084,6 +1084,37 @@ MonoBehaviour:
     - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
     - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
     - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+  - time: 3
+    prefabs:
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+  - time: 6
+    prefabs:
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+    - {fileID: 2405059456098197475, guid: 5dad145bc1e54323983fda1a70ce670a, type: 3}
+  pathSpeed: 5
+  oscillateVerticalSpeed: 0.5
+  oscillateVerticalAmplitude: 0.3
+  oscillateHorizontalSpeed: 0.4
+  oscillateHorizontalShift: 1
 --- !u!1 &1888823606
 GameObject:
   m_ObjectHideFlags: 0

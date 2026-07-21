@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : SpaceShip, IDamageable {
+public class EnemyShip : SpaceShip, IDamageable {
 
 	public bool IsDead => health <= 0.0F;
 
@@ -16,11 +17,25 @@ public class Enemy : SpaceShip, IDamageable {
 	
 	private float health;
 	private float attackCooldown;
+	private bool attackEnabled;
+	
+	private ContactFilter2D contactFilter;
+	private CircleCollider2D circleCollider;
+	
+	private static List<Collider2D> overlapBuffer = new();
 
 	protected override void Awake() {
 		base.Awake();
+		circleCollider = GetComponent<CircleCollider2D>();
 		detectVelocity = true;
 		health = maxHealth;
+		contactFilter = new ContactFilter2D();
+		contactFilter.useLayerMask = true;
+		contactFilter.layerMask = LayerMask.GetMask("Player");
+	}
+
+	protected override void Start() {
+		base.Start();
 		attackCooldown = Mathf.Lerp(projectileIntervalMin, projectileIntervalMax, Random.value);
 	}
 
@@ -28,7 +43,7 @@ public class Enemy : SpaceShip, IDamageable {
 		if(Core.SuspendGameLoop) return;
 		base.Update();
 		
-		if(attackCooldown > 0.0F) {
+		if(attackEnabled && attackCooldown > 0.0F) {
 			attackCooldown -= Time.deltaTime;
 			if(attackCooldown <= 0.0F) {
 				if(!Core.Game.Finished) {
@@ -37,6 +52,15 @@ public class Enemy : SpaceShip, IDamageable {
 					p.name = projectilePrefab.name;
 					p.SetOwner(this);
 				}
+			}
+		}
+		
+		Physics2D.OverlapCircle(transform.position, circleCollider.radius, contactFilter, overlapBuffer);
+		for(int i = 0; i < overlapBuffer.Count; i++) {
+			if(overlapBuffer[i].TryGetComponent(out PlayerShip player)) {
+				player.ApplyDamage(100.0F);
+				// this.ApplyDamage(100.0F);
+				break;
 			}
 		}
 	}
@@ -54,5 +78,9 @@ public class Enemy : SpaceShip, IDamageable {
 		}
 
 		return health == 0.0F;
+	}
+
+	public void SetAttackEnabled(bool enabled) {
+		attackEnabled = enabled;
 	}
 }

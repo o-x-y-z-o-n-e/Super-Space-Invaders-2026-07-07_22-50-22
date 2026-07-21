@@ -14,4 +14,12 @@ public class SettingsMenu : GuiView {
 		
 	}
 
+	public void OnMusicVolumeChanged() {
+		
+	}
+
+	public void OnSfxVolumeChanged() {
+		
+	}
+
 }

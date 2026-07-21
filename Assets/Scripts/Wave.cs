@@ -45,17 +45,17 @@ public class WaveEnemyGroup {
 
 	public float Time => time;
 	
-	public IEnumerable<Enemy> Enemies => instances;
+	public IEnumerable<EnemyShip> Enemies => instances;
 	
 	[SerializeField] private float time;
-	[SerializeField] private List<Enemy> prefabs;
+	[SerializeField] private List<EnemyShip> prefabs;
 
-	private List<Enemy> instances;
+	private List<EnemyShip> instances;
 
-	public IEnumerable<Enemy> SpawnAll() {
+	public IEnumerable<EnemyShip> SpawnAll() {
 		instances = new();
 		for(int i = 0; i < prefabs.Count; i++) {
-			Enemy instance = GameObject.Instantiate(prefabs[i]);
+			EnemyShip instance = GameObject.Instantiate(prefabs[i]);
 			instance.name = prefabs[i].name;
 			instance.gameObject.SetActive(false);
 			instances.Add(instance);
@@ -68,7 +68,7 @@ public class WaveEnemyGroup {
 		for(int i = 0; i < instances.Count; i++) {
 			float distance = Mathf.Max((pathLength - i * 2.0F) / Mathf.Max(pathLength, Mathf.Epsilon), 0.0F);
 			spline.Evaluate(distance, out float3 position, out float3 tangent, out float3 upVector);
-			Enemy instance = instances[i];
+			EnemyShip instance = instances[i];
 			instance.transform.position = position;
 			instance.transform.rotation = Quaternion.AngleAxis(180, Vector3.forward);
 			instance.gameObject.SetActive(true);

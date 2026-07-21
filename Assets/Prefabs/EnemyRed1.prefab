@@ -241,8 +241,8 @@ MonoBehaviour:
   maxHealth: 5
   projectilePrefab: {fileID: 7214909755117908016, guid: a32dff99832959c66adab4a95350e148, type: 3}
   projectileSpawn: {fileID: 4170496318468380503}
-  projectileIntervalMin: 3
-  projectileIntervalMax: 6
+  projectileIntervalMin: 4
+  projectileIntervalMax: 8
   scoreOnDeath: 40
 --- !u!58 &8242633039481940746
 CircleCollider2D:
