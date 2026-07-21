@@ -38,7 +38,10 @@ public class Formation : Wave {
 		if(nextGroupIndex < groups.Length) {
 			if(timer > Core.Level.WaveStartWaitTime) {
 				if(timer - Core.Level.WaveStartWaitTime >= groups[nextGroupIndex].Time) {
-					groups[nextGroupIndex].StartAll(splines.Splines[nextGroupIndex]);
+					// groups[nextGroupIndex].StartAll(splines.Splines[nextGroupIndex]);
+					foreach(var enemy in groups[nextGroupIndex].Enemies) {
+						enemy.gameObject.SetActive(true);
+					}
 					nextGroupIndex++;
 				}
 			}
@@ -47,11 +50,33 @@ public class Formation : Wave {
 		for(int i = 0; i < nextGroupIndex; i++) {
 			float speed = 4.0F;
 			float length = splines.Splines[i].GetLength();
-			float t = Mathf.Clamp01(((timer - groups[i].Time) * speed) / length);
-			splines.Splines[i].Evaluate(t, out float3 position, out float3 tangent, out float3 up);
+			float head = Mathf.Min((timer - groups[i].Time) * speed, length);
+			float t = Mathf.Clamp01(head / length);
+			float turnDistance = 1.5F;
+			float turnBlend = Mathf.Clamp01((head - (length - turnDistance)) / turnDistance);
 			if(t == 1.0F) {
+				int j = 0;
+				foreach(var enemy in groups[i].Enemies) {
+					t = Mathf.Clamp01((length - j * 2.0F) / length);
+					splines.Splines[i].Evaluate(t, out float3 position, out float3 tangent, out float3 up);
+					enemy.transform.position = position;
+					enemy.transform.rotation = Quaternion.AngleAxis(180, Vector3.forward);
+					j++;
+				}
 				// TODO: oscillate in formation
 			} else {
+				int j = 0;
+				foreach(var enemy in groups[i].Enemies) {
+					t = Mathf.Clamp01((head - j * 2.0F) / length);
+					splines.Splines[i].Evaluate(t, out float3 position, out float3 tangent, out float3 up);
+					enemy.transform.position = position;
+					enemy.transform.rotation = Quaternion.Slerp(
+						Quaternion.LookRotation(Vector3.forward, tangent),
+						Quaternion.AngleAxis(180, Vector3.forward),
+						turnBlend
+					);
+					j++;
+				}
 				// TODO: follow path
 			}
 		}
