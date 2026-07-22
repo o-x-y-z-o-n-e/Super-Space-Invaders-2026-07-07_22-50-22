@@ -1,6 +1,8 @@
 using UnityEngine;
 
 public abstract class PlayerWeapon : MonoBehaviour {
+	
+	public int Level => level;
 
 	[SerializeField] protected float heatPerShot;
 	[SerializeField] protected float heatCooldownSpeed;

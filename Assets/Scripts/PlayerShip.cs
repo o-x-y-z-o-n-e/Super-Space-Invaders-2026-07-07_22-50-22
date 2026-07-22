@@ -11,6 +11,11 @@ public class PlayerShip : SpaceShip, IDamageable {
 
 	public bool InIntro => intro;
 	public bool InOutro => outro;
+
+	public int CurrentWeaponIndex => currentWeaponIndex;
+	public PlayerWeapon CurrentWeapon => weapons[currentWeaponIndex];
+	
+	public AudioSource Audio => audio;
 	
 	[SerializeField] private float acceleration;
 	[Space]
@@ -37,6 +42,8 @@ public class PlayerShip : SpaceShip, IDamageable {
 
 	private Vector2 extraVelocity;
 	private bool lockVerticalMovementInput;
+	
+	private int currentWeaponIndex;
 
 	private static List<Collider2D> lootPickupBuffer = new();
 
@@ -217,13 +224,16 @@ public class PlayerShip : SpaceShip, IDamageable {
 		filter.SetLayerMask(LayerMask.GetMask("LootDrop"));
 		Physics2D.OverlapCircle(transform.position, collider.radius, filter, lootPickupBuffer);
 		for(int i = 0; i < lootPickupBuffer.Count; i++) {
-			if(lootPickupBuffer[i].TryGetComponent(out LootDrop loot)) {
-				PickUp(loot);
+			if(lootPickupBuffer[i].TryGetComponent(out ILootDrop loot)) {
+				// PickUp(loot);
+				loot.Interact(this);
 			}
 		}
 	}
 
-	private void PickUp(LootDrop loot) {
+	private void PickUp(ILootDrop loot) {
+		
+		/*
 		switch (loot.Type) {
 			case LootDropType.Coin:
 				Core.Level.AddScorePoints(loot.Amount);
@@ -236,6 +246,7 @@ public class PlayerShip : SpaceShip, IDamageable {
 			audio.PlayOneShot(loot.PickupSound.Clip, loot.PickupSound.Volume);
 		}
 		Destroy(loot.gameObject);
+		*/
 	}
 
 	public void SetWeapon(int weaponIndex) {
@@ -246,6 +257,7 @@ public class PlayerShip : SpaceShip, IDamageable {
 				weapons[i].gameObject.SetActive(false);
 			}
 		}
+		currentWeaponIndex = weaponIndex;
 		weapons[weaponIndex].gameObject.SetActive(false);
 	}
 
